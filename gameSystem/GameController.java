@@ -3,7 +3,7 @@ package gameSystem;
 import java.util.ArrayList;
 import java.util.List;
 public class GameController {
-	public float timeScale = 1f;
+	public float timeScale = 1f; 		//If you want slow motion, set this variable to a number between 1 and 0.
 	public List<Trigger> triggers = new ArrayList<>();
 	public List<String> triggerNames = new ArrayList<>();
 	public List<Spring> gameSprings = new ArrayList<>();

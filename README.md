@@ -1,7 +1,12 @@
-# Open-Game-Engine
+
+![Logo](https://raw.githubusercontent.com/serhadcicekli/Open-Game-Engine/main/OpenGameEngine.png)
+# Open Game Engine
 A 2D game engine made with java.
-# Features
-1. Fast
-2. Lightweight
--It almost does not tire the processor, it does not consume much RAM.
--Built-in physics engine (still has some issues).
+## Features
+- #### Fast
+- #### Lightweight
+- #### Easy to use
+- #### It almost does not tire the processor, it does not consume much RAM.
+## Demo
+#### A simple game made with Open Game Engine:
+https://raw.github.com/serhadcicekli/Open-Game-Engine/main/Build/Game.jar

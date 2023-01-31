@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 public class GameObject {
 	List<Shape> shapes = new ArrayList<>();
 	List<Integer> shapeID = new ArrayList<Integer>();
+	public List<Integer> physicLayers = new ArrayList<>();
 	public float mass = 1;
 	public boolean isColliding = false;
 	public boolean fixed = false;
@@ -44,6 +45,16 @@ public class GameObject {
 	|                         |        |                             |
 	+-------------------------+        +-----------------------------+
 */
+	public void addPhysicLayer(int layerID) {
+		if(!physicLayers.contains(layerID)) {
+			physicLayers.add(layerID);
+		}
+	}
+	public void removePhysicLayer(int layerID) {
+		if(physicLayers.contains(layerID)) {
+			physicLayers.remove(physicLayers.indexOf(layerID));
+		}
+	}
 	public void autoMass() {
 		mass = width * height / 2500;
 	}
@@ -68,6 +79,7 @@ public class GameObject {
 		}
 	}
 	public GameObject(String name) {
+		physicLayers.add(0);
 		goName = name;
 	}
 	/*

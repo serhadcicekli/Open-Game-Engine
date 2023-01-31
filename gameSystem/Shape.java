@@ -10,7 +10,9 @@ import javax.imageio.ImageIO;
 public class Shape {
 	public int shapeType = 0;
 	public BufferedImage goImage;
+	boolean filledR = true;
 	public boolean haveImage = false;
+	public boolean haveText = false;
 	public int sourceX;
 	public int sourceY;
 	public int sourceW;
@@ -20,16 +22,10 @@ public class Shape {
 	public float xOffset = 0;
 	public float yOffset = 0;
 	public Color color = Color.white;
-	public Shape(String shapeString,float ofsX,float ofsY,float w,float h,Color clr) {
-			if(shapeString.toLowerCase() == "rect") {
-				shapeType = 1;
-			}
-			if(shapeString.toLowerCase() == "circle") {
-				shapeType = 2;
-			}
-			if(shapeString.toLowerCase() == "empty") {
-				shapeType = 0;
-			}
+	public String shapeText;
+	public Shape(float ofsX,float ofsY,float w,float h,Color clr,boolean filled) {
+		haveText = false;
+		filledR = filled;
 		color = clr;
 		haveImage = false;
 		width = w;
@@ -37,16 +33,8 @@ public class Shape {
 		xOffset = ofsX;
 		yOffset = ofsY;
 	}
-	public Shape(String shapeString,float ofsX,float ofsY,float w,float h,int sx,int sy,int sw,int sh,BufferedImage img) {
-		if(shapeString.toLowerCase() == "rect") {
-			shapeType = 1;
-		}
-		if(shapeString.toLowerCase() == "circle") {
-			shapeType = 2;
-		}
-		if(shapeString.toLowerCase() == "empty") {
-			shapeType = 0;
-		}
+	public Shape(float ofsX,float ofsY,float w,float h,int sx,int sy,int sw,int sh,BufferedImage img) {
+	haveText = false;
 	haveImage = true;
 	goImage = img;
 	width = w;
@@ -58,18 +46,22 @@ public class Shape {
 	sourceW = sw;
 	sourceH = sh;
 }
-	public void setShapeType(String shapeString) {
-		if(shapeString.toLowerCase() == "rect") {
-			shapeType = 1;
+	public Shape(float ofsX,float ofsY,Color txtColor, String shapeTxt) {
+		color = txtColor;
+		haveText = true;
+		shapeText = shapeTxt;
+		xOffset = ofsX;
+		yOffset = ofsY;
+	}
+	void drawRect(int x1,int y1,int x2,int y2,boolean filled,Graphics2D g2d) {
+		if(filled) {
+			g2d.fillRect(x1, y1, x2 - x1, y2 - y1);
 		}
-		if(shapeString.toLowerCase() == "circle") {
-			shapeType = 2;
-		}
-		if(shapeString.toLowerCase() == "empty") {
-			shapeType = 0;
+		else {
+			
+			g2d.drawRect(x1, y1, x2 - x1 - 1, y2 - y1 - 1);
 		}
 	}
-	
 	public void loadImageFromResource(String imagepathString) {
 		try {
 			goImage = ImageIO.read(getClass().getResource(imagepathString));
@@ -84,7 +76,34 @@ public class Shape {
 			haveImage = false;
 		}
 	}
+	int clamp(int a,int min,int max) {
+		if(a > max) {
+			return max;
+		}
+		else if(a < min) {
+			return min;
+		}
+		else {
+			return a;
+		}
+	}
+	float clamp(float a,float min,float max) {
+		if(a > max) {
+			return max;
+		}
+		else if(a < min) {
+			return min;
+		}
+		else {
+			return a;
+		}
+	}
 	public void renderSelf(Graphics2D g2ds,float camx,float camy,float centerx,float centery,int screenW,int screenH,float camz) {
+		if(haveText) {
+			g2ds.setColor(color);
+			g2ds.drawString(shapeText, ((centerx + xOffset - camx) * camz) + (screenW / 2), (screenH / 2) - ((centery + yOffset - camy) * camz));
+		}
+		else{
 		if(haveImage) {
 			g2ds.drawImage(goImage
 					, (int)(((centerx + xOffset - camx) * camz) + (screenW / 2) - (width / 2 * camz))		//x1
@@ -99,12 +118,21 @@ public class Shape {
 			}
 		else {
 			g2ds.setColor(color );
+			drawRect((int)clamp(((centerx + xOffset - camx) * camz) + (screenW / 2) - (width / 2 * camz),0,screenW)
+					,(int)clamp((screenH / 2) - ((centery + yOffset - camy) * camz) - (height / 2 * camz),0,screenH)
+					,(int)clamp(((centerx + xOffset - camx) * camz) + (screenW / 2) + (width / 2 * camz),0,screenW)
+					,(int)clamp((screenH / 2) - ((centery + yOffset - camy) * camz) + (height / 2 * camz),0,screenH)
+					,filledR
+					, g2ds);
+			/*
 			g2ds.fillRect(
-					(int)(((centerx + xOffset - camx) * camz) + (screenW / 2) - (width / 2 * camz))
-						 ,(int)((screenH / 2) - ((centery + yOffset - camy) * camz) - (height / 2 * camz))
-						 ,(int)(width * camz)
-						 ,(int)(height * camz)
+						  clamp((int)(((centerx + xOffset - camx) * camz) + (screenW / 2) - (width / 2 * camz)),0,screenW)
+						 ,clamp((int)((screenH / 2) - ((centery + yOffset - camy) * camz) - (height / 2 * camz)),0,screenH)
+						 ,(int)width
+						 ,(int)height
 						 );
+			*/
+		}
 		}
 	}
 }

@@ -3,7 +3,7 @@ package gameSystem;
 import java.util.ArrayList;
 import java.util.List;
 public class GameController {
-	public float timeScale = 1f; 		//If you want slow motion, set this variable to a number between 1 and 0.
+	public float timeScale = 1f;
 	public List<Trigger> triggers = new ArrayList<>();
 	public List<String> triggerNames = new ArrayList<>();
 	public List<Spring> gameSprings = new ArrayList<>();
@@ -42,6 +42,26 @@ public class GameController {
 	float lerp(float x,float y,float a) {
 		return ((1 - a) * x) + (a * y);
 	}
+	boolean testLayers(List<Integer> Acol,List<Integer> Bcol) {
+		boolean temp = false;
+		if(Acol.size() > Bcol.size()) {
+			for(int i = 0;i < Bcol.size();i++) {
+				if(Acol.contains(Bcol.get(i))) {
+					temp = true;
+					i = Bcol.size();
+				}
+			}
+		}
+		else {
+			for(int i = 0;i < Acol.size();i++) {
+				if(Bcol.contains(Acol.get(i))) {
+					temp = true;
+					i = Acol.size();
+				}
+			}
+		}
+		return temp;
+	}
 	public void physicsUpdate(float atfl) {
 
 		cuTicks += 1;
@@ -64,8 +84,9 @@ public class GameController {
 			cuTicks = 0;
 			
 		}
+		
 		for(int i = 0; i < peA.size(); i++) {
-			if(((peA.get(i).width + peB.get(i).width) / 2 > Math.abs(peA.get(i).xPos - peB.get(i).xPos)) && ((peA.get(i).height + peB.get(i).height) / 2 > Math.abs(peA.get(i).yPos - peB.get(i).yPos))) {
+			if(((peA.get(i).width + peB.get(i).width) / 2 > Math.abs(peA.get(i).xPos - peB.get(i).xPos)) && ((peA.get(i).height + peB.get(i).height) / 2 > Math.abs(peA.get(i).yPos - peB.get(i).yPos)) && testLayers(peA.get(i).physicLayers, peB.get(i).physicLayers)) {
 				peA.get(i).isColliding = true;
 				peB.get(i).isColliding = true;
 				
@@ -185,7 +206,7 @@ public class GameController {
 			triggers.get(i).collidingObjectCount = 0;
 			for(int j = 0; j < peGameObjects.size(); j++) {
 				if(peGameObjects.get(j) != triggers.get(i).attachedGameObject) {
-				if(((peGameObjects.get(j).width + triggers.get(i).width) / 2 > Math.abs(peGameObjects.get(j).xPos - triggers.get(i).xPos)) && ((peGameObjects.get(j).height + triggers.get(i).height) / 2 > Math.abs(peGameObjects.get(j).yPos - triggers.get(i).yPos))) {
+				if(((peGameObjects.get(j).width + triggers.get(i).width) / 2 > Math.abs(peGameObjects.get(j).xPos - triggers.get(i).xPos)) && ((peGameObjects.get(j).height + triggers.get(i).height) / 2 > Math.abs(peGameObjects.get(j).yPos - triggers.get(i).yPos)) && testLayers(peGameObjects.get(j).physicLayers, triggers.get(i).physicLayers)) {
 					triggers.get(i).collidingObjectCount += 1;
 				}
 				}

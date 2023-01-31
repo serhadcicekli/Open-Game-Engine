@@ -1,33 +1,40 @@
 package main;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import javax.swing.plaf.ColorUIResource;
+
 import gameSystem.GameController;
 import gameSystem.GameObject;
 import gameSystem.GameRuntime;
 import gameSystem.KeySystem;
 import gameSystem.Spring;
 public class GamePanel extends JPanel implements Runnable{
-	
-	KeySystem keySystem = new KeySystem();
 	private static final long serialVersionUID = -3773031973775166541L;
 	GameRuntime goRuntime = new GameRuntime();
+	KeySystem keySystem = new KeySystem(goRuntime);
 	final int screenWidth = goRuntime.screenWidth;
 	final int screenHeight = goRuntime.screenHeight;
 	int FPS = goRuntime.FPS;
+	String versionString = "1.10";
 	Thread gameThread;
 	GameController goController = new GameController();
 	public GamePanel() {
 		this.setPreferredSize(new Dimension(screenWidth,screenHeight));
-		this.setBackground(Color.BLACK);
+		this.setBackground(new Color(30,34,38));
 		this.setDoubleBuffered(true);
 		this.setFocusable(true);
 		this.addKeyListener(keySystem);
@@ -79,8 +86,7 @@ public class GamePanel extends JPanel implements Runnable{
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D)g;
 		if(initialTick) {
-			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-			        RenderingHints.VALUE_ANTIALIAS_ON);
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 			goController.screenW = screenWidth;
 			goController.screenH = screenHeight;
 			try {
@@ -94,6 +100,8 @@ public class GamePanel extends JPanel implements Runnable{
 			if(intro) {
 				if(introImage != null) {
 					g2.drawImage(introImage, (screenWidth / 2) - 400, (screenHeight / 2) - 300, (screenWidth / 2) + 400, (screenHeight / 2) + 300, 0, 0, 800, 600, null);
+					g2.setColor(Color.white);
+					g2.drawString("version " + versionString, (screenWidth / 2) - 260, (screenHeight / 2) + 63);
 					introTick += 1;
 					if(introTick > FPS * 3) {
 						intro = false;
@@ -103,6 +111,7 @@ public class GamePanel extends JPanel implements Runnable{
 			else {
 				if(firstTick) {
 					goRuntime.gameStart(g2, goController);
+					keySystem.active = true;
 					firstTick = false;
 				}
 				else{
@@ -135,8 +144,9 @@ public class GamePanel extends JPanel implements Runnable{
 					goRuntime.axisV = aV;
 					goRuntime.axisHraw = aHr;
 					goRuntime.axisVraw = aVr;
-					goRuntime.update(g2,goController);
+					goController.timeScale = goRuntime.timeScale;
 					goController.physicsUpdate(antiFlicker);
+					goRuntime.update(g2,goController);
 					for (GameObject itemObject : goController.gameObjects) {
 						if(fixedTick) {
 							itemObject.fixedTick(physGravity,goController.timeScale);

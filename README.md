@@ -17,5 +17,7 @@ https://raw.github.com/serhadcicekli/Open-Game-Engine/main/Build/Game.jar
 - Fixed the rendering issue of solid colored shapes overflowing from the screen
 - Buffered visual class implemented
 - Default background color changed (rgb: 30,34,38)
+- Fixed object flickering when a physics active object is stuck
+- Added text to objects via shapes
 ### v1.0
-- This is the first version of OGE.
+- This is the first version of OGE

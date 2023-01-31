@@ -9,11 +9,12 @@ public class KeySystem implements KeyListener{
 	public boolean wkey;
 	public boolean akey;
 	public boolean skey;
+	public boolean active;
 	public boolean dkey;
-	public boolean testKey(char keyc) {
-		return downCharacters.contains(Character.toUpperCase(keyc)) || downCharacters.contains(Character.toLowerCase(keyc)); 
+	GameRuntime gRuntime;
+	public KeySystem(GameRuntime gr) {
+		gRuntime = gr;
 	}
-	List<Character> downCharacters = new ArrayList<>();
 	@Override
 	public void keyTyped(KeyEvent e) {
 		
@@ -22,9 +23,8 @@ public class KeySystem implements KeyListener{
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if(!downCharacters.contains(e.getKeyChar())) {
-			downCharacters.add(e.getKeyChar());
-		}
+		if(active) {
+		gRuntime.keyPressed(e);
 		if(e.getKeyCode() == KeyEvent.VK_W) {
 			wkey = true;
 		}
@@ -49,13 +49,14 @@ public class KeySystem implements KeyListener{
 		if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
 			dkey = true;
 		}
+		}
+
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		if(downCharacters.contains(e.getKeyChar())) {
-			downCharacters.remove(downCharacters.indexOf(e.getKeyChar()));
-		}
+		if(active) {
+		gRuntime.keyReleased(e);
 		if(e.getKeyCode() == KeyEvent.VK_W) {
 			wkey = false;
 		}
@@ -80,6 +81,8 @@ public class KeySystem implements KeyListener{
 		if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
 			dkey = false;
 		}
+		}
+		
 	}
 
 }

@@ -1,7 +1,7 @@
 
 ![Logo](https://raw.githubusercontent.com/serhadcicekli/Open-Game-Engine/main/OpenGameEngine.png)
 # Open Game Engine
-A 2D game engine made with java.
+A super simple and basic 2D game engine made with java.
 ## Features
 - #### Fast
 - #### Lightweight
